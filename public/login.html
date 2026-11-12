@@ -1,0 +1,40 @@
+<!doctype html>
+<html lang="id">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>Login</title>
+    <link rel="stylesheet" href="/css/style.css" />
+  </head>
+
+  <body class="login-body">
+    <form id="f" class="login-card">
+      💻
+      <h2>virgi project</h2>
+      <input type="email" id="email" placeholder="Email" required />
+      <input type="password" id="password" placeholder="Password" required />
+      <p id="err" class="err"></p>
+      <button class="btn primary">Masuk</button>
+    </form>
+
+    <script src="/js/api.js"></script>
+    <script>
+      $("#f").onsubmit = async (e) => {
+        e.preventDefault();
+        try {
+          const d = await API.post("/auth/login", {
+            email: $("#email").value,
+            password: $("#password").value,
+          });
+          localStorage.setItem("token", d.token);
+          localStorage.setItem("user", JSON.stringify(d.user));
+          location.href = ["admin", "hr"].includes(d.user.role)
+            ? "/index.html"
+            : "/clock.html";
+        } catch (x) {
+          $("#err").textContent = x.message;
+        }
+      };
+    </script>
+  </body>
+</html>

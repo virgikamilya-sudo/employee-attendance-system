@@ -1,0 +1,101 @@
+<!doctype html>
+<html lang="id">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <title>Clock In / Out</title>
+
+    <link rel="stylesheet" href="/css/style.css" />
+  </head>
+
+  <body>
+    <header class="topbar">
+      <div class="brand">💻<b>virgi project</b></div>
+
+      <span id="who" style="margin-left: auto"></span>
+
+      <button class="btn" onclick="logout()">Logout</button>
+    </header>
+
+    <main class="narrow">
+      <section class="card">
+        <h2 id="clockNow"></h2>
+
+        <video id="video" autoplay playsinline muted></video>
+
+        <canvas id="canvas" hidden></canvas>
+
+        <p id="loc" style="color: var(--muted)">Mengambil lokasi…</p>
+
+        <div class="row">
+          <button class="btn primary" id="btnIn">Clock In</button>
+
+          <button class="btn" id="btnOut">Clock Out</button>
+        </div>
+
+        <p id="msg"></p>
+      </section>
+
+      <section class="card">
+        <h3>Ajukan Time Off / Lembur</h3>
+        <form id="reqForm" class="stack">
+          <select name="kind">
+            <option value="timeoff">Time Off</option>
+            <option value="overtime">Overtime</option>
+          </select>
+
+          <select name="type">
+            <option>Cuti</option>
+            <option>Sakit</option>
+            <option>Izin</option>
+          </select>
+
+          <label>
+            Tanggal mulai
+
+            <input type="date" name="start_date" required />
+          </label>
+
+          <label>
+            Tanggal selesai (Time Off)
+
+            <input type="date" name="end_date" />
+          </label>
+
+          <label>
+            Durasi lembur (menit)
+
+            <input type="number" name="minutes" min="0" />
+          </label>
+
+          <textarea name="reason" placeholder="Alasan"> </textarea>
+
+          <button class="btn primary">Kirim Pengajuan</button>
+        </form>
+      </section>
+
+      <section class="card">
+        <h3>Riwayat Absensi</h3>
+
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>Tanggal</th>
+                <th>Masuk</th>
+                <th>Pulang</th>
+                <th>Status</th>
+              </tr>
+            </thead>
+
+            <tbody id="hist"></tbody>
+          </table>
+        </div>
+      </section>
+    </main>
+
+    <script src="/js/api.js"></script>
+    <script src="/js/clock.js"></script>
+  </body>
+</html>

@@ -1,0 +1,437 @@
+<!doctype html>
+<html lang="id">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <title>Time Management</title>
+
+    <link rel="stylesheet" href="/css/style.css" />
+  </head>
+
+  <body>
+    <header class="topbar">
+      <div class="brand">
+        💻<b>virgi project</b>
+        <span>Attendance Management</span>
+      </div>
+
+      <nav>
+        <a class="tab" data-tab="attendance">Attendance</a>
+
+        <a class="tab" data-tab="employees">Employees</a>
+
+        <a class="tab" data-tab="overtime">
+          Overtime
+          <i class="badge orange" id="bOvertime">0</i>
+        </a>
+
+        <a class="tab" data-tab="timeoff">
+          Time Off
+          <i class="badge red" id="bTimeoff">0</i>
+        </a>
+
+        <a class="tab" data-tab="shifts">Shift Schedule</a>
+
+        <a class="tab" data-tab="worktime">Work Time</a>
+      </nav>
+
+      <button class="btn" onclick="logout()">Logout</button>
+    </header>
+
+    <main>
+      <section id="attendance" class="page">
+        <div class="page-head">
+          <h1>Attendance</h1>
+
+          <div class="date-nav">
+            <button id="prev">‹</button>
+
+            <span id="dateLabel"></span>
+
+            <button id="next">›</button>
+          </div>
+
+          <div class="actions">
+            <button class="btn" id="btnReport">Attendance Report</button>
+
+            <button class="btn primary" id="btnAdd">+ Add Attendance</button>
+          </div>
+        </div>
+
+        <div class="cards">
+          <div class="card">
+            <h3>Present Summary</h3>
+
+            <div class="stats">
+              <div>
+                <span>On time</span>
+                <div id="s_on_time"></div>
+              </div>
+
+              <div>
+                <span>Late clock-in</span>
+                <div id="s_late"></div>
+              </div>
+
+              <div>
+                <span>Early clock-in</span>
+                <div id="s_early"></div>
+              </div>
+            </div>
+          </div>
+
+          <div class="card">
+            <h3>Not Present Summary</h3>
+
+            <div class="stats">
+              <div>
+                <span>Absent</span>
+                <div id="s_absent"></div>
+              </div>
+
+              <div>
+                <span>No clock-in</span>
+                <div id="s_no_clock_in"></div>
+              </div>
+
+              <div>
+                <span>No clock-out</span>
+                <div id="s_no_clock_out"></div>
+              </div>
+
+              <div>
+                <span>Invalid</span>
+                <div id="s_invalid"></div>
+              </div>
+            </div>
+          </div>
+
+          <div class="card">
+            <h3>Away Summary</h3>
+
+            <div class="stats">
+              <div>
+                <span>Day off</span>
+                <div id="s_day_off"></div>
+              </div>
+
+              <div>
+                <span>Time off</span>
+                <div id="s_time_off"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="toolbar">
+          <input type="text" id="search" placeholder="Search employee" />
+
+          <input type="date" id="from" title="Dari tanggal" />
+
+          <input type="date" id="to" title="Sampai tanggal" />
+
+          <select id="statusFilter">
+            <option value="">Semua status</option>
+
+            <option value="on_time">On time</option>
+
+            <option value="late">Late</option>
+
+            <option value="early">Early</option>
+          </select>
+        </div>
+
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th data-sort="name">Employee Name</th>
+
+                <th data-sort="clock_in">Clock-in &amp; Out</th>
+
+                <th data-sort="overtime_minutes">Overtime</th>
+
+                <th>Picture</th>
+
+                <th>Location</th>
+
+                <th>Note</th>
+              </tr>
+            </thead>
+
+            <tbody id="attBody"></tbody>
+          </table>
+        </div>
+      </section>
+
+      <section id="employees" class="page" hidden>
+        <div class="page-head">
+          <h1>Employees</h1>
+
+          <div class="actions">
+            <button class="btn primary" id="btnAddEmp">+ Add Employee</button>
+          </div>
+        </div>
+
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>No</th>
+                <th>Nama</th>
+                <th>Email</th>
+                <th>Role</th>
+                <th>Departemen</th>
+                <th>Shift</th>
+                <th></th>
+              </tr>
+            </thead>
+
+            <tbody id="empBody"></tbody>
+          </table>
+        </div>
+      </section>
+
+      <section id="overtime" class="page" hidden>
+        <div class="page-head">
+          <h1>Overtime Requests</h1>
+        </div>
+
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>Karyawan</th>
+                <th>Pengajuan</th>
+                <th>Alasan</th>
+                <th>Status</th>
+                <th></th>
+              </tr>
+            </thead>
+
+            <tbody id="overtimeBody"></tbody>
+          </table>
+        </div>
+      </section>
+
+      <section id="timeoff" class="page" hidden>
+        <div class="page-head">
+          <h1>Time Off Requests</h1>
+        </div>
+
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>Karyawan</th>
+                <th>Pengajuan</th>
+                <th>Alasan</th>
+                <th>Status</th>
+                <th></th>
+              </tr>
+            </thead>
+
+            <tbody id="timeoffBody"></tbody>
+          </table>
+        </div>
+      </section>
+
+      <section id="shifts" class="page" hidden>
+        <div class="page-head">
+          <h1>Shift Schedule</h1>
+
+          <div class="actions">
+            <button class="btn primary" id="btnAddShift">+ Add Shift</button>
+          </div>
+        </div>
+
+        <p style="color: var(--muted)">
+          Shift ditetapkan ke karyawan lewat menu Employees → Edit.
+        </p>
+
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>Nama Shift</th>
+                <th>Jam Masuk</th>
+                <th>Jam Pulang</th>
+                <th></th>
+              </tr>
+            </thead>
+
+            <tbody id="shiftBody"></tbody>
+          </table>
+        </div>
+      </section>
+
+      <section id="worktime" class="page" hidden>
+        <div class="page-head">
+          <h1>Work Time Rules</h1>
+        </div>
+
+        <div class="card" style="max-width: 480px">
+          <form id="formSettings" class="stack">
+            <label>
+              Latitude kantor
+              <input name="office_lat" required />
+            </label>
+
+            <label>
+              Longitude kantor
+              <input name="office_lng" required />
+            </label>
+
+            <label>
+              Radius geofence (meter)
+              <input name="radius_m" type="number" required />
+            </label>
+
+            <label>
+              Toleransi keterlambatan (menit)
+              <input name="late_tolerance" type="number" required />
+            </label>
+
+            <label>
+              Minimal menit untuk dihitung lembur
+              <input name="overtime_min" type="number" required />
+            </label>
+
+            <button class="btn primary">Simpan</button>
+          </form>
+        </div>
+      </section>
+    </main>
+
+    <dialog id="dlgAtt">
+      <form id="formAtt">
+        <h3>Add Attendance</h3>
+
+        <label>
+          Karyawan
+          <select name="employee_id"></select>
+        </label>
+
+        <label>
+          Tanggal
+          <input type="date" name="date" required />
+        </label>
+
+        <label>
+          Clock-in
+          <input type="time" name="clock_in" required />
+        </label>
+
+        <label>
+          Clock-out
+          <input type="time" name="clock_out" />
+        </label>
+
+        <label>
+          Catatan
+          <input name="note" />
+        </label>
+
+        <div class="row">
+          <button type="button" class="btn" data-close>Batal</button>
+
+          <button class="btn primary">Simpan</button>
+        </div>
+      </form>
+    </dialog>
+
+    <dialog id="dlgEmp">
+      <form id="formEmp">
+        <h3>Employee</h3>
+
+        <input type="hidden" name="eid" />
+
+        <label>
+          Employee No
+          <input name="employee_no" required />
+        </label>
+
+        <label>
+          Nama
+          <input name="name" required />
+        </label>
+
+        <label>
+          Email
+          <input type="email" name="email" required />
+        </label>
+
+        <label>
+          Password (kosongkan jika tidak diubah)
+          <input type="password" name="password" />
+        </label>
+
+        <label>
+          Role
+
+          <select name="role">
+            <option value="employee">Employee</option>
+
+            <option value="hr">HR</option>
+
+            <option value="admin">Admin</option>
+          </select>
+        </label>
+
+        <label>
+          Departemen
+          <input name="department" />
+        </label>
+
+        <label>
+          Jabatan
+          <input name="position" />
+        </label>
+
+        <label>
+          Shift
+          <select name="shift_id"></select>
+        </label>
+
+        <div class="row">
+          <button type="button" class="btn" data-close>Batal</button>
+
+          <button class="btn primary">Simpan</button>
+        </div>
+      </form>
+    </dialog>
+
+    <dialog id="dlgShift">
+      <form id="formShift">
+        <h3>Shift</h3>
+
+        <input type="hidden" name="sid" />
+
+        <label>
+          Nama
+          <input name="name" required />
+        </label>
+
+        <label>
+          Jam masuk
+          <input type="time" name="start_time" required />
+        </label>
+
+        <label>
+          Jam pulang
+          <input type="time" name="end_time" required />
+        </label>
+
+        <div class="row">
+          <button type="button" class="btn" data-close>Batal</button>
+
+          <button class="btn primary">Simpan</button>
+        </div>
+      </form>
+    </dialog>
+
+    <script src="/js/api.js"></script>
+    <script src="/js/admin.js"></script>
+  </body>
+</html>
